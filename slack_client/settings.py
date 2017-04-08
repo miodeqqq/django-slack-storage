@@ -141,19 +141,14 @@ CELERYBEAT_SCHEDULE = {
     },
     'get_slack_channels_task': {
         'task': 'get_slack_channels_task',
-        'schedule': crontab(minute='*/5')
+        'schedule': crontab(minute='*/10')
     },
     'get_posted_by_users_files_task': {
         'task': 'get_posted_by_users_files_task',
-        'schedule': crontab(minute='*/10')
+        'schedule': crontab(minute='*/15')
     },
     'get_channel_messages_task': {
         'task': 'get_channel_messages_task',
         'schedule': crontab(minute='*/15')
     },
 }
-
-try:
-    from .local_settings import *
-except ImportError:
-    pass
