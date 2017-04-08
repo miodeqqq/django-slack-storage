@@ -65,6 +65,22 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='SlackPrivateChannels',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('private_channel_name', models.CharField(verbose_name='Private channel name', max_length=100, blank=True, null=True)),
+                ('private_channel_id', models.CharField(verbose_name='Private channel ID', max_length=20, blank=True, null=True)),
+                ('private_channel_creator', models.CharField(verbose_name='Private channel creator', max_length=100, blank=True, null=True)),
+                ('private_channel_members', models.TextField(verbose_name='Private channel members', blank=True, null=True)),
+                ('private_channel_value', models.TextField(verbose_name='Private channel value', blank=True, null=True)),
+                ('private_channel_topic', models.CharField(verbose_name='Private channel topic', max_length=255, blank=True, null=True)),
+            ],
+            options={
+                'verbose_name': 'Slack channel',
+                'verbose_name_plural': 'Slack channels',
+            },
+        ),
+        migrations.CreateModel(
             name='SlackUsers',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),

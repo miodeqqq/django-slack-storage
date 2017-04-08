@@ -100,7 +100,7 @@ SUIT_CONFIG = {
     'MENU': (
         '-',
         {'app': 'api', 'label': 'Slack Storage', 'icon': 'icon-folder-open', 'models': (
-            ('slackconfiguration', 'slackchannels', 'slackusers', 'slackmessages', 'slackfiles')
+            ('slackconfiguration', 'slackchannels', 'slackprivatechannels', 'slackusers', 'slackmessages', 'slackfiles')
         )},
         '-',
     ),
@@ -149,6 +149,10 @@ CELERYBEAT_SCHEDULE = {
     },
     'get_channel_messages_task': {
         'task': 'get_channel_messages_task',
+        'schedule': crontab(minute='*/15')
+    },
+    'get_slack_private_channels_task': {
+        'task': 'get_slack_private_channels_task',
         'schedule': crontab(minute='*/15')
     },
 }

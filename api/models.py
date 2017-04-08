@@ -168,3 +168,55 @@ class SlackFiles(models.Model):
 
     def __str__(self):
         return self.user
+
+class SlackPrivateChannels(models.Model):
+    """
+    Model to store private Slack channels.
+    """
+
+    private_channel_name = models.CharField(
+        'Private channel name',
+        blank=True,
+        null=True,
+        max_length=100,
+    )
+
+    private_channel_id = models.CharField(
+        'Private channel ID',
+        blank=True,
+        null=True,
+        max_length=20,
+    )
+
+    private_channel_creator = models.CharField(
+        'Private channel creator',
+        blank=True,
+        null=True,
+        max_length=100
+    )
+
+    private_channel_members = models.TextField(
+        'Private channel members',
+        blank=True,
+        null=True
+    )
+
+    private_channel_value = models.TextField(
+        'Private channel value',
+        blank=True,
+        null=True
+    )
+
+    private_channel_topic = models.CharField(
+        'Private channel topic',
+        blank=True,
+        null=True,
+        max_length=255
+    )
+
+    def __str__(self):
+        return self.private_channel_name
+
+    class Meta:
+        verbose_name = 'Slack private channel'
+        verbose_name_plural = 'Slack private channels'

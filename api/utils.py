@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from slackclient import SlackClient
-from api.models import SlackConfiguration, SlackUsers
 from datetime import datetime
+
+from slackclient import SlackClient
+
+from api.models import SlackConfiguration
+
 
 def get_slack_connection():
     """
@@ -26,11 +29,7 @@ def get_all_channels_data(sc):
     for channel_item in channels.get('channels', None):
         channel_name = channel_item.get('name', None).strip()
         channel_id = channel_item.get('id', None).strip()
-
-        channel_members = SlackUsers.objects.filter(
-            slack_id__in=channel_item.get('members', None)
-        ).values_list('slack_username', flat=True)
-
+        channel_members = channel_item.get('members', None)
         channel_num_members = channel_item.get('num_members', None)
         channel_description = channel_item.get('topic', {}).get('value', None).strip()
 
@@ -41,6 +40,32 @@ def get_all_channels_data(sc):
     final_channel_data = [c for c in channels_data if c]
 
     return final_channel_data
+
+
+def get_private_channels_data(sc):
+    """
+    General method to get all private channels data.
+    """
+
+    private_channels = sc.api_call("groups.list")
+
+    priv__channels_data = []
+
+    for priv_item in private_channels.get('groups'):
+        channel_name = priv_item.get('name').strip()
+        channel_id = priv_item.get('id').strip()
+        channel_creator = priv_item.get('creator').strip()
+        channel_members = priv_item.get('members')
+        channel_purpose_value = priv_item.get('purpose', {}).get('value', '').strip()
+        channel_topic = priv_item.get('topic', {}).get('value', '').strip()
+
+        priv_channels__items = channel_name, channel_id, channel_creator, channel_members, channel_purpose_value, channel_topic
+
+        priv__channels_data.append(priv_channels__items)
+
+    final_priv_channel_data = [c for c in priv__channels_data if c]
+
+    return final_priv_channel_data
 
 
 def get_all_users_data(sc):
@@ -82,7 +107,12 @@ def get_channel_messages(sc, channel_id):
 
     for message_item in history['messages']:
         if message_item.get('user') and message_item.get('text'):
-            user__message_ts = message_item.get('user').strip(), message_item.get('text').strip(), message_item.get('ts')
+            user = message_item.get('user').strip()
+            message = message_item.get('text').strip()
+            ts = message_item.get('ts')
+
+            user__message_ts = user, message, ts
+
             messages.append(user__message_ts)
 
     final_messages = [tuple(filter(None, t)) for t in messages if t[0]]
@@ -101,12 +131,8 @@ def get_all_users_files(sc):
 
     for file_item in files.get('files', None):
         if file_item.get('url_private_download'):
-            username = SlackUsers.objects.filter(
-                slack_id=file_item.get('user', '').strip()
-            ).values_list('slack_username', flat=True)
-
-            user_file = file_item.get('url_private_download')
-
+            username = file_item.get('user', '').strip()
+            user_file = file_item.get('url_private_download').strip()
             timestamp = file_item.get('timestamp')
 
             _user_data = ''.join(username), user_file, timestamp
