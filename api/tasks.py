@@ -22,16 +22,12 @@ def get_slack_users_task():
     slack_users = get_all_users_data(sc)
 
     for slack_user in slack_users:
-        try:
-            SlackUsers.objects.update_or_create(
-                slack_id=slack_user[0],
-                slack_username=slack_user[1],
-                slack_email=slack_user[2],
-                slack_avatar_path=slack_user[3]
-            )
-        except IntegrityError:
-            pass
-
+        SlackUsers.objects.get_or_create(
+            slack_id=slack_user[0],
+            slack_username=slack_user[1],
+            slack_email=slack_user[2],
+            slack_avatar_path=slack_user[3]
+        )
 
 @shared_task(
     name='get_slack_channels_task',
@@ -55,9 +51,9 @@ def get_slack_channels_task():
                 number_of_members=slack_channel[3],
                 channel_description=slack_channel[4],
             )
+
         except IntegrityError:
             pass
-
 
 @shared_task(
     name='get_posted_by_users_files_task',
@@ -76,14 +72,11 @@ def get_posted_by_users_files_task():
 
         timestamp = get_timestamp(slack_file[2])
 
-        try:
-            SlackFiles.objects.update_or_create(
-                user=slack_file[0],
-                file_path=slack_file[1],
-                timestamp=timestamp
-            )
-        except IntegrityError:
-            pass
+        SlackFiles.objects.get_or_create(
+            user=slack_file[0],
+            file_path=slack_file[1],
+            timestamp=timestamp
+        )
 
 
 @shared_task(
