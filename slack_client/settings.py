@@ -139,17 +139,17 @@ CELERYBEAT_SCHEDULE = {
         'task': 'get_slack_users_task',
         'schedule': crontab(minute='*/5')
     },
-    'get_posted_by_users_files_task': {
-        'task': 'get_posted_by_users_files_task',
-        'schedule': crontab(minute='*/5')
-    },
-    'get_channel_messages_task': {
-        'task': 'get_channel_messages_task',
-        'schedule': crontab(minute='*/10')
-    },
     'get_slack_channels_task': {
         'task': 'get_slack_channels_task',
         'schedule': crontab(minute='*/5')
+    },
+    'get_posted_by_users_files_task': {
+        'task': 'get_posted_by_users_files_task',
+        'schedule': crontab(minute='*/10')
+    },
+    'get_channel_messages_task': {
+        'task': 'get_channel_messages_task',
+        'schedule': crontab(minute='*/15')
     },
 }
 
