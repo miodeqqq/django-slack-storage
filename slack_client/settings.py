@@ -152,3 +152,8 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute='*/5')
     },
 }
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass

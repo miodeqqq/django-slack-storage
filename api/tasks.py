@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from celery import shared_task
+from django.db import IntegrityError
 
 from api.models import SlackUsers, SlackChannels, SlackMessages, SlackFiles
 from api.utils import get_channel_messages, get_all_users_data, get_all_users_files
@@ -21,12 +22,15 @@ def get_slack_users_task():
     slack_users = get_all_users_data(sc)
 
     for slack_user in slack_users:
-        SlackUsers.objects.update_or_create(
-            slack_id=slack_user[0],
-            slack_username=slack_user[1],
-            slack_email=slack_user[2],
-            slack_avatar_path=slack_user[3]
-        )
+        try:
+            SlackUsers.objects.update_or_create(
+                slack_id=slack_user[0],
+                slack_username=slack_user[1],
+                slack_email=slack_user[2],
+                slack_avatar_path=slack_user[3]
+            )
+        except IntegrityError:
+            pass
 
 
 @shared_task(
@@ -43,13 +47,17 @@ def get_slack_channels_task():
     slack_channels = get_all_channels_data(sc)
 
     for slack_channel in slack_channels:
-        SlackChannels.objects.update_or_create(
-            channel_name=slack_channel[0],
-            channel_id=slack_channel[1],
-            members=', '.join([m for m in slack_channel[2] if m]),
-            number_of_members=slack_channel[3],
-            channel_description=slack_channel[4],
-        )
+        try:
+            SlackChannels.objects.update_or_create(
+                channel_name=slack_channel[0],
+                channel_id=slack_channel[1],
+                members=', '.join([m for m in slack_channel[2] if m]),
+                number_of_members=slack_channel[3],
+                channel_description=slack_channel[4],
+            )
+        except IntegrityError:
+            pass
+
 
 @shared_task(
     name='get_posted_by_users_files_task',
@@ -68,11 +76,14 @@ def get_posted_by_users_files_task():
 
         timestamp = get_timestamp(slack_file[2])
 
-        SlackFiles.objects.update_or_create(
-            user=slack_file[0],
-            file_path=slack_file[1],
-            timestamp=timestamp
-        )
+        try:
+            SlackFiles.objects.update_or_create(
+                user=slack_file[0],
+                file_path=slack_file[1],
+                timestamp=timestamp
+            )
+        except IntegrityError:
+            pass
 
 
 @shared_task(
@@ -108,9 +119,12 @@ def get_channel_messages_task():
 
             timestamp = get_timestamp(author_and_message[2])
 
-            SlackMessages.objects.update_or_create(
-                channel_name=channel_name,
-                message=author_and_message[1],
-                author_of_message=username,
-                timestamp=timestamp
-            )
+            try:
+                SlackMessages.objects.update_or_create(
+                    channel_name=channel_name,
+                    message=author_and_message[1],
+                    author_of_message=username,
+                    timestamp=timestamp
+                )
+            except IntegrityError:
+                pass

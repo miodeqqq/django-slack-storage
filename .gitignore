@@ -97,3 +97,5 @@ ENV/
 
 # project
 static/
+.gitignore
+.dockerignore
