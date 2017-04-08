@@ -15,8 +15,8 @@ class Migration(migrations.Migration):
             name='SlackChannels',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('channel_name', models.CharField(verbose_name='Channel name', max_length=100, unique=True, blank=True, null=True)),
-                ('channel_id', models.CharField(verbose_name='Channel ID', max_length=20, unique=True, blank=True, null=True)),
+                ('channel_name', models.CharField(verbose_name='Channel name', max_length=100, blank=True, null=True)),
+                ('channel_id', models.CharField(verbose_name='Channel ID', max_length=20, blank=True, null=True)),
                 ('channel_description', models.TextField(verbose_name='Channel description', blank=True, null=True)),
                 ('members', models.TextField(verbose_name='Channel members', blank=True, null=True)),
                 ('number_of_members', models.IntegerField(verbose_name='Number of members', default=0)),
