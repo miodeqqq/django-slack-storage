@@ -4,6 +4,7 @@ from django.db import models
 from solo.models import SingletonModel
 from tinymce.models import HTMLField
 
+
 class SlackConfiguration(SingletonModel):
     """
     Model to store Slack configuration data.
@@ -169,6 +170,7 @@ class SlackFiles(models.Model):
     def __str__(self):
         return self.user
 
+
 class SlackPrivateChannels(models.Model):
     """
     Model to store private Slack channels.
@@ -220,3 +222,30 @@ class SlackPrivateChannels(models.Model):
     class Meta:
         verbose_name = 'Slack private channel'
         verbose_name_plural = 'Slack private channels'
+
+
+class SlackTeamEmojis(models.Model):
+    """
+    General model to store Slack team's emojis.
+    """
+
+    emoji = models.CharField(
+        'Emoji',
+        blank=True,
+        null=True,
+        max_length=64
+    )
+
+    emoji_path = models.CharField(
+        'Emoji path',
+        blank=True,
+        null=True,
+        max_length=255
+    )
+
+    class Meta:
+        verbose_name = 'Slack emoji'
+        verbose_name_plural = 'Slack emojis'
+
+    def __str__(self):
+        return self.emoji

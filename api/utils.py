@@ -12,9 +12,7 @@ def get_slack_connection():
     General method to connect to Slack using API token.
     """
 
-    token = SlackConfiguration.get_solo().api_token
-
-    return SlackClient(token=token)
+    return SlackClient(SlackConfiguration.get_solo().api_token)
 
 
 def get_all_channels_data(sc):
@@ -142,6 +140,26 @@ def get_all_users_files(sc):
     final__users_data = [f for f in files__users_data if f]
 
     return final__users_data
+
+
+def get_all_team_emoji(sc):
+    """
+    General method to get all team's custom emoji.
+    """
+
+    emojis = sc.api_call('emoji.list')
+
+    emoji_data = []
+
+    for emoji_item in emojis.get('emoji', {}).items():
+        emoji_value = emoji_item[0]
+        emoji_url_or_shortcut = emoji_item[1]
+
+        emoji__value = emoji_value, emoji_url_or_shortcut
+
+        emoji_data.append(emoji__value)
+
+    return emoji_data
 
 
 def get_timestamp(ts):

@@ -6,7 +6,46 @@ from django.utils.safestring import mark_safe
 from solo.admin import SingletonModelAdmin
 
 from api.models import SlackConfiguration, SlackChannels, SlackMessages
-from api.models import SlackUsers, SlackFiles, SlackPrivateChannels
+from api.models import SlackUsers, SlackFiles, SlackPrivateChannels, SlackTeamEmojis
+
+
+@admin.register(SlackTeamEmojis)
+class SlackTeamEmojisAdmin(admin.ModelAdmin):
+    fields = [
+        'emoji',
+        'emoji_path',
+    ]
+
+    search_fields = [
+        'emoji',
+    ]
+
+    ordering = [
+        'emoji',
+    ]
+
+    list_display = [
+        'emoji',
+        'get_emoji_as_thumbnail',
+    ]
+
+    readonly_fields = [
+        'emoji',
+        'emoji_path',
+    ]
+
+    list_per_page = 60
+
+    def get_emoji_as_thumbnail(self, obj):
+        if obj.emoji_path:
+            return mark_safe('<img class="img-responsive" src="{emoji_path}" width="60" height="60" />'.format(
+                emoji_path=obj.emoji_path
+            ))
+
+        return 'No emoji found'
+
+    get_emoji_as_thumbnail.allow_tags = True
+    get_emoji_as_thumbnail.short_description = 'Emojis as thumbnail'
 
 
 @admin.register(SlackPrivateChannels)

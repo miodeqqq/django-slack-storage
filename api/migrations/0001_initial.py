@@ -76,8 +76,20 @@ class Migration(migrations.Migration):
                 ('private_channel_topic', models.CharField(verbose_name='Private channel topic', max_length=255, blank=True, null=True)),
             ],
             options={
-                'verbose_name': 'Slack channel',
-                'verbose_name_plural': 'Slack channels',
+                'verbose_name': 'Slack private channel',
+                'verbose_name_plural': 'Slack private channels',
+            },
+        ),
+        migrations.CreateModel(
+            name='SlackTeamEmojis',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('emoji', models.CharField(verbose_name='Emoji', max_length=64, blank=True, null=True)),
+                ('emoji_path', models.CharField(verbose_name='Emoji path', max_length=255, blank=True, null=True)),
+            ],
+            options={
+                'verbose_name': 'Slack emoji',
+                'verbose_name_plural': 'Slack emojis',
             },
         ),
         migrations.CreateModel(

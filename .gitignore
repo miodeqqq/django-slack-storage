@@ -99,3 +99,4 @@ ENV/
 static/
 .gitignore
 .dockerignore
+run_tasks.sh

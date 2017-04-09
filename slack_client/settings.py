@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'd-#ti38-if235@353j!$8u!9^r(%=_w#gmbpt)zdyirn!5u)iz'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -100,7 +100,15 @@ SUIT_CONFIG = {
     'MENU': (
         '-',
         {'app': 'api', 'label': 'Slack Storage', 'icon': 'icon-folder-open', 'models': (
-            ('slackconfiguration', 'slackchannels', 'slackprivatechannels', 'slackusers', 'slackmessages', 'slackfiles')
+            (
+                'slackconfiguration',
+                'slackchannels',
+                'slackprivatechannels',
+                'slackusers',
+                'slackmessages',
+                'slackfiles',
+                'slackteamemojis'
+            )
         )},
         '-',
     ),
@@ -153,6 +161,10 @@ CELERYBEAT_SCHEDULE = {
     },
     'get_slack_private_channels_task': {
         'task': 'get_slack_private_channels_task',
+        'schedule': crontab(minute='*/15')
+    },
+    'get_team_emojis_task': {
+        'task': 'get_team_emojis_task',
         'schedule': crontab(minute='*/15')
     },
 }
