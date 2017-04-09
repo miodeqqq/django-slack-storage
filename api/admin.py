@@ -1,10 +1,93 @@
 # -*- coding: utf-8 -*-
 
-from django.utils.html import format_html
-from solo.admin import SingletonModelAdmin
 from django.contrib import admin
-from api.models import SlackConfiguration, SlackChannels, SlackMessages, SlackUsers, SlackFiles
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from solo.admin import SingletonModelAdmin
+
+from api.models import SlackConfiguration, SlackChannels, SlackMessages
+from api.models import SlackUsers, SlackFiles, SlackPrivateChannels, SlackTeamEmojis
+
+
+@admin.register(SlackTeamEmojis)
+class SlackTeamEmojisAdmin(admin.ModelAdmin):
+    fields = [
+        'emoji',
+        'emoji_path',
+    ]
+
+    search_fields = [
+        'emoji',
+    ]
+
+    ordering = [
+        'emoji',
+    ]
+
+    list_display = [
+        'emoji',
+        'get_emoji_as_thumbnail',
+    ]
+
+    readonly_fields = [
+        'emoji',
+        'emoji_path',
+    ]
+
+    list_per_page = 60
+
+    def get_emoji_as_thumbnail(self, obj):
+        if obj.emoji_path:
+            return mark_safe('<img class="img-responsive" src="{emoji_path}" width="60" height="60" />'.format(
+                emoji_path=obj.emoji_path
+            ))
+
+        return 'No emoji found'
+
+    get_emoji_as_thumbnail.allow_tags = True
+    get_emoji_as_thumbnail.short_description = 'Emojis as thumbnail'
+
+
+@admin.register(SlackPrivateChannels)
+class SlackPrivateChannelsAdmin(admin.ModelAdmin):
+    fields = [
+        'private_channel_id',
+        'private_channel_name',
+        'private_channel_creator',
+        'private_channel_members',
+        'private_channel_value',
+        'private_channel_topic',
+    ]
+
+    search_fields = [
+        'private_channel_id',
+        'private_channel_name',
+        'private_channel_members',
+        'private_channel_creator',
+    ]
+
+    readonly_fields = [
+        'private_channel_id',
+        'private_channel_name',
+        'private_channel_creator',
+        'private_channel_members',
+        'private_channel_value',
+        'private_channel_topic',
+    ]
+
+    list_display = [
+        'private_channel_id',
+        'private_channel_name',
+        'private_channel_creator',
+        'private_channel_value',
+        'private_channel_topic',
+    ]
+
+    ordering = [
+        'private_channel_name'
+    ]
+
+    list_per_page = 60
 
 
 @admin.register(SlackFiles)
@@ -48,6 +131,7 @@ class SlackFilesAdmin(admin.ModelAdmin):
     get_file_path_as_url.allow_tags = True
     get_file_path_as_url.short_description = 'File URL'
 
+
 @admin.register(SlackConfiguration)
 class SlackConfigurationAdmin(SingletonModelAdmin):
     fieldsets = [
@@ -57,6 +141,7 @@ class SlackConfigurationAdmin(SingletonModelAdmin):
             ]
         }),
     ]
+
 
 @admin.register(SlackChannels)
 class SlackChannelsAdmin(admin.ModelAdmin):
@@ -94,6 +179,7 @@ class SlackChannelsAdmin(admin.ModelAdmin):
 
     list_per_page = 60
 
+
 @admin.register(SlackMessages)
 class SlackMessagesAdmin(admin.ModelAdmin):
     fields = [
@@ -127,6 +213,7 @@ class SlackMessagesAdmin(admin.ModelAdmin):
     ]
 
     list_per_page = 60
+
 
 @admin.register(SlackUsers)
 class SlackUsersAdmin(admin.ModelAdmin):
