@@ -75,6 +75,10 @@ class SlackPrivateChannelsAdmin(admin.ModelAdmin):
         'private_channel_topic',
     ]
 
+    list_filter = [
+        'private_channel_creator',
+    ]
+
     list_display = [
         'private_channel_id',
         'private_channel_name',
@@ -102,6 +106,10 @@ class SlackFilesAdmin(admin.ModelAdmin):
         'user',
         'get_file_path_as_url',
         'timestamp'
+    ]
+
+    list_filter = [
+        'user',
     ]
 
     ordering = [
@@ -199,6 +207,11 @@ class SlackMessagesAdmin(admin.ModelAdmin):
         'author_of_message',
         'message',
         'timestamp'
+    ]
+
+    list_filter = [
+        'channel_name',
+        'author_of_message'
     ]
 
     readonly_fields = [
