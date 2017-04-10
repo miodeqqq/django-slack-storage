@@ -77,13 +77,21 @@ def get_all_users_data(sc):
 
     for user in users['members']:
         if not user['deleted']:
-            user_data = user.get('profile', None).get('real_name', None)
+            user_data = user.get('profile').get('real_name')
 
-            if not 'slackbot' in user_data:
-                user_image = user.get('profile', {}).get('image_original', None)
-                user_name = user.get('profile', {}).get('real_name_normalized', None)
-                user_email = user.get('profile', {}).get('email', None)
-                user_id = user.get('id', None)
+            if not 'slackbot' in user_data and not 'HeyTaco!' in user_data:
+                user_image_other = user.get('profile', {}).get('image_192')
+                user_image = user.get('profile', {}).get('image_original', user_image_other)
+                user_email = user.get('profile', {}).get('email')
+
+                user_name_from_mail = user_email.split('@')[0].capitalize()
+
+                user_name = user.get('profile', {}).get('real_name_normalized')
+
+                if not user_name:
+                    user_name = user_name_from_mail
+
+                user_id = user.get('id')
 
                 single_user__data = user_id, user_name, user_email, user_image
 
