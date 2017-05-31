@@ -1,8 +1,24 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from django.db import models
+from django.template.defaultfilters import slugify
 from solo.models import SingletonModel
 from tinymce.models import HTMLField
+
+
+def slack_user_files_directory(instance, filename):
+    """
+    Upload path for files in SlackUsers model.
+    """
+
+    file_name, ext = os.path.splitext(filename)
+
+    return os.path.join('posted_by_users_files/{file_name}{ext}'.format(
+        file_name=slugify(file_name),
+        ext=ext
+    ))
 
 
 class SlackConfiguration(SingletonModel):
@@ -157,6 +173,20 @@ class SlackFiles(models.Model):
 
     file_path = models.URLField(
         'File path',
+    )
+
+    user_file = models.FileField(
+        'Slack user\'s file',
+        upload_to=slack_user_files_directory,
+        db_index=True,
+        blank=True,
+        null=True
+    )
+
+    download_status = models.BooleanField(
+        'Download status',
+        default=False,
+        db_index=True
     )
 
     timestamp = models.DateTimeField(

@@ -2,9 +2,21 @@
 
 from datetime import datetime
 
+from django.core.files.base import ContentFile
 from slackclient import SlackClient
 
 from api.models import SlackConfiguration
+
+
+class StreamFile(ContentFile):
+    """
+    Helpful class for downloaded big files.
+    """
+
+    def __init__(self, stream):
+        super(ContentFile, self).__init__(stream)
+        stream.seek(0, 2)
+        self.size = stream.tell()
 
 
 def get_slack_connection():

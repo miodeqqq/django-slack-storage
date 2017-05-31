@@ -29,7 +29,8 @@ THIRD_PARTY_APPS = (
     'django.contrib.admin',
     'solo',
     'djcelery',
-    'tinymce'
+    'tinymce',
+    'django_extensions'
 )
 
 INSTALLED_APPS = DEFAULT_APPS + PROJECT_APPS + THIRD_PARTY_APPS
@@ -89,6 +90,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 if not os.path.exists(STATIC_ROOT):
     os.mkdir(STATIC_ROOT)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+if not os.path.exists(MEDIA_ROOT):
+    os.mkdir(MEDIA_ROOT)
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
@@ -167,4 +174,15 @@ CELERYBEAT_SCHEDULE = {
         'task': 'get_team_emojis_task',
         'schedule': crontab(minute='*/15')
     },
+    'download_posted_by_users_files_task': {
+        'task': 'download_posted_by_users_files_task',
+        'schedule': crontab(minute='*/15')
+    },
 }
+
+NOTEBOOK_ARGUMENTS = [
+    '--ip=0.0.0.0',
+    '--port=8888',
+    '--no-browser',
+    '--NotebookApp.password="sha1:74181c6846fc:16307b9757974c1b9b3796c637b00340c450548c"'
+]

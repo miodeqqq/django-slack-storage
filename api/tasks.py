@@ -1,11 +1,23 @@
 # -*- coding: utf-8 -*-
 
+import os
+from io import BytesIO
+
+import requests
 from celery import shared_task
 from django.db import IntegrityError
 
+from api.models import SlackConfiguration
 from api.models import SlackUsers, SlackChannels, SlackMessages, SlackFiles, SlackPrivateChannels, SlackTeamEmojis
-from api.utils import get_channel_messages, get_all_users_data, get_all_users_files, get_all_team_emoji
+from api.utils import get_channel_messages, get_all_users_data, get_all_users_files, get_all_team_emoji, StreamFile
 from api.utils import get_slack_connection, get_all_channels_data, get_timestamp, get_private_channels_data
+
+try:
+    from requests.packages.urllib3.contrib import pyopenssl
+
+    pyopenssl.inject_into_urllib3()
+except ImportError:
+    pass
 
 
 @shared_task(
@@ -149,10 +161,76 @@ def get_posted_by_users_files_task():
                     file_path=slack_file[1],
                     timestamp=timestamp
                 )
+
             except IntegrityError:
                 pass
     except:
         pass
+
+
+@shared_task(
+    name='download_posted_by_users_files_task',
+    queue='slack_download_posted_files',
+)
+def download_posted_by_users_files_task():
+    """
+    Celery task to download posted by users files and store them as FileField objects.
+    """
+
+    from api.models import SlackFiles
+
+    posted_files = SlackFiles.objects.filter(download_status=False)
+
+    for posted_file in posted_files:
+        download_single_posted_by_user_file_task.delay(posted_file.id)
+
+#TODO: Not working right now.
+@shared_task(
+    name='download_single_posted_by_user_file_task',
+    queue='slack_download_posted_files',
+)
+def download_single_posted_by_user_file_task(file_pk):
+    """
+    Celery task to download single file posted by Slack user. 
+    """
+
+    from api.models import SlackFiles
+
+    file_item = SlackFiles.objects.get(pk=file_pk)
+
+    file_url = file_item.file_path
+    file_name = os.path.basename(file_url)
+
+    api_token = SlackConfiguration.get_solo().api_token
+
+    payload = {
+        'email': 'x',
+        'password': 'x',
+        'token': api_token
+    }
+
+    with requests.session() as session:
+        session.post(file_url, params=payload)
+        session.headers.update(dict(referer=file_url))
+
+        r = session.get(
+            file_url,
+            stream=True
+        )
+
+        file_content = r.content
+
+        buffer = BytesIO(file_content)
+        django_file = StreamFile(buffer)
+
+        file_item.user_file.save(
+            file_name,
+            django_file,
+            save=True
+        )
+
+        file_item.download_status = True
+        file_item.save()
 
 
 @shared_task(
@@ -166,7 +244,6 @@ def get_channel_messages_task():
 
     try:
         sc = get_slack_connection()
-
         slack_channels = get_all_channels_data(sc)
 
         slack_channels_ids = [channel_id[1] for channel_id in slack_channels]
@@ -179,14 +256,12 @@ def get_channel_messages_task():
                     channel_id=channel_id
                 ).values_list('channel_name', flat=True)
 
-                channel_name = ''.join(name)
-
                 author = SlackUsers.objects.filter(
                     slack_id=author_and_message[0]
                 ).values_list('slack_username', flat=True)
 
+                channel_name = ''.join(name)
                 username = ''.join(author)
-
                 timestamp = get_timestamp(author_and_message[2])
 
                 try:
@@ -194,7 +269,7 @@ def get_channel_messages_task():
                         channel_name=channel_name,
                         message=author_and_message[1],
                         author_of_message=username,
-                        timestamp=timestamp
+                        timestamp=timestamp,
                     )
                 except IntegrityError:
                     pass
