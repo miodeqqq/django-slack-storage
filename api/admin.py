@@ -11,28 +11,28 @@ from api.models import SlackUsers, SlackFiles, SlackPrivateChannels, SlackTeamEm
 
 @admin.register(SlackTeamEmojis)
 class SlackTeamEmojisAdmin(admin.ModelAdmin):
-    fields = [
+    fields = (
         'emoji',
         'emoji_path',
-    ]
+    )
 
-    search_fields = [
+    search_fields = (
         'emoji',
-    ]
+    )
 
-    ordering = [
+    ordering = (
         'emoji',
-    ]
+    )
 
-    list_display = [
+    list_display = (
         'emoji',
         'get_emoji_as_thumbnail',
-    ]
+    )
 
-    readonly_fields = [
+    readonly_fields = (
         'emoji',
         'emoji_path',
-    ]
+    )
 
     list_per_page = 60
 
@@ -50,81 +50,86 @@ class SlackTeamEmojisAdmin(admin.ModelAdmin):
 
 @admin.register(SlackPrivateChannels)
 class SlackPrivateChannelsAdmin(admin.ModelAdmin):
-    fields = [
+    fields = (
         'private_channel_id',
         'private_channel_name',
         'private_channel_creator',
         'private_channel_members',
         'private_channel_value',
         'private_channel_topic',
-    ]
+    )
 
-    search_fields = [
+    search_fields = (
         'private_channel_id',
         'private_channel_name',
         'private_channel_members',
         'private_channel_creator',
-    ]
+    )
 
-    readonly_fields = [
+    readonly_fields = (
         'private_channel_id',
         'private_channel_name',
         'private_channel_creator',
         'private_channel_members',
         'private_channel_value',
         'private_channel_topic',
-    ]
+    )
 
-    list_filter = [
+    list_filter = (
         'private_channel_creator',
-    ]
+    )
 
-    list_display = [
+    list_display = (
         'private_channel_id',
         'private_channel_name',
         'private_channel_creator',
         'private_channel_value',
         'private_channel_topic',
-    ]
+    )
 
-    ordering = [
-        'private_channel_name'
-    ]
+    ordering = (
+        'private_channel_name',
+    )
 
     list_per_page = 60
 
 
 @admin.register(SlackFiles)
 class SlackFilesAdmin(admin.ModelAdmin):
-    fields = [
+    fields = (
         'user',
+        'user_file',
         'file_path',
+        'download_status',
         'timestamp'
-    ]
+    )
 
-    list_display = [
+    list_display = (
         'user',
+        'user_file',
+        'download_status',
         'get_file_path_as_url',
         'timestamp'
-    ]
+    )
 
-    list_filter = [
+    list_filter = (
         'user',
-    ]
+    )
 
-    ordering = [
-        '-timestamp'
-    ]
+    ordering = (
+        '-timestamp',
+    )
 
-    search_fields = [
-        'user'
-    ]
+    search_fields = (
+        'user',
+    )
 
-    readonly_fields = [
+    readonly_fields = (
         'user',
         'file_path',
+        'download_status',
         'timestamp'
-    ]
+    )
 
     list_per_page = 60
 
@@ -153,112 +158,112 @@ class SlackConfigurationAdmin(SingletonModelAdmin):
 
 @admin.register(SlackChannels)
 class SlackChannelsAdmin(admin.ModelAdmin):
-    fields = [
+    fields = (
         'channel_name',
         'channel_id',
         'number_of_members',
         'channel_description',
         'members'
-    ]
+    )
 
-    search_fields = [
+    search_fields = (
         'channel_id',
         'channel_name'
-    ]
+    )
 
-    readonly_fields = [
+    readonly_fields = (
         'channel_id',
         'channel_name',
         'members',
         'number_of_members',
         'channel_description',
-    ]
+    )
 
-    list_display = [
+    list_display = (
         'channel_id',
         'channel_name',
         'number_of_members',
         'channel_description'
-    ]
+    )
 
-    ordering = [
-        'channel_name'
-    ]
+    ordering = (
+        'channel_name',
+    )
 
     list_per_page = 60
 
 
 @admin.register(SlackMessages)
 class SlackMessagesAdmin(admin.ModelAdmin):
-    fields = [
+    fields = (
         'channel_name',
         'author_of_message',
         'message',
         'timestamp'
-    ]
+    )
 
-    search_fields = [
+    search_fields = (
         'channel_name',
         'author_of_message',
-    ]
+    )
 
-    list_display = [
+    list_display = (
         'channel_name',
         'author_of_message',
         'message',
         'timestamp'
-    ]
+    )
 
-    list_filter = [
+    list_filter = (
         'channel_name',
         'author_of_message'
-    ]
+    )
 
-    readonly_fields = [
+    readonly_fields = (
         'channel_name',
         'author_of_message',
         'message',
         'timestamp'
-    ]
+    )
 
-    ordering = [
-        '-timestamp'
-    ]
+    ordering = (
+        '-timestamp',
+    )
 
     list_per_page = 60
 
 
 @admin.register(SlackUsers)
 class SlackUsersAdmin(admin.ModelAdmin):
-    fields = [
+    fields = (
         'slack_id',
         'slack_username',
         'slack_email',
         'slack_avatar_path',
-    ]
+    )
 
-    search_fields = [
+    search_fields = (
         'slack_email',
         'slack_id',
         'slack_username',
-    ]
+    )
 
-    ordering = [
+    ordering = (
         'slack_username',
-    ]
+    )
 
-    list_display = [
+    list_display = (
         'slack_username',
         'slack_email',
         'get_avatar_as_thumbnail'
-    ]
+    )
 
-    readonly_fields = [
+    readonly_fields = (
         'slack_id',
         'slack_username',
         'slack_email',
         'slack_avatar_path'
-    ]
+    )
 
     list_per_page = 60
 

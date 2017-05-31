@@ -38,6 +38,19 @@ services:
     volumes_from:
       - web
 
+  celery_worker_files:
+    image: slack-client
+    command: ./run_celery_worker_files.sh
+    environment:
+      - C_FORCE_ROOT=1
+    links:
+      - postgres
+      - rabbitmq
+    depends_on:
+      - rabbitmq
+    volumes_from:
+      - web
+
   celery_beat:
     image: slack-client
     command: ./run_celery_beat.sh
@@ -60,6 +73,7 @@ services:
       - postgres
     depends_on:
       - celery_worker
+      - celery_worker_files
     environment:
       - C_FORCE_ROOT=true
       - DATABASE_HOST=postgres
