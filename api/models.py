@@ -2,6 +2,7 @@
 
 import os
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.defaultfilters import slugify
 from solo.models import SingletonModel
@@ -150,6 +151,24 @@ class SlackMessages(models.Model):
     timestamp = models.DateTimeField(
         'Timestamp'
     )
+
+    def clean(self):
+        super(SlackMessages, self).clean()
+
+        already_exists = self.__class__.objects.filter(
+            message=self.message,
+            author_of_message=self.author_of_message,
+            timestamp=self.timestamp
+        ).count()
+
+        if already_exists > 0:
+            raise ValidationError(
+                'Duplicate!'
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super(SlackMessages, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.channel_name
