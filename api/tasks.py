@@ -35,7 +35,6 @@ def get_slack_users_task():
         slack_users = get_all_users_data(sc)
 
         for slack_user in slack_users:
-
             try:
                 SlackUsers.objects.get_or_create(
                     slack_id=slack_user[0],
