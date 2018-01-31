@@ -17,6 +17,8 @@ services:
       - rabbitmq
     depends_on:
       - postgres
+    volumes:
+      - .:/code
 
   rabbitmq:
     image: rabbitmq:3.6-management

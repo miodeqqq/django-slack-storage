@@ -1,4 +1,11 @@
-### Version v 1.0
+### Version v1.1.0
+
+**Release date: 31.01.2018**
+
+* Added support for downloading posted by users files;
+
+
+### Version v1.0.0
 
 **Release date: 08.04.2017**
 

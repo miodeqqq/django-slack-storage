@@ -1,12 +1,35 @@
 # -*- coding: utf-8 -*-
 
 import os
+import time
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.template.defaultfilters import slugify
 from solo.models import SingletonModel
 from tinymce.models import HTMLField
+
+
+def prepare_directories(dir_name):
+    """
+    Creates dirs and subdirs for given corpus files to avoid lack of space in storage.
+    """
+
+    file_path = os.path.join(
+        '{media_root}/{dir_name}/{data_dirs}'.format(
+            media_root=settings.MEDIA_ROOT,
+            data_dirs=str(time.strftime('%y/%m/%d/%H/%M')),
+            dir_name=dir_name
+        ),
+    )
+
+    try:
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
+    except OSError:
+        pass
+
+    return file_path
 
 
 def slack_user_files_directory(instance, filename):
@@ -14,12 +37,17 @@ def slack_user_files_directory(instance, filename):
     Upload path for files in SlackUsers model.
     """
 
+    file_path = prepare_directories(dir_name='posted_by_users_files')
+
     file_name, ext = os.path.splitext(filename)
 
-    return os.path.join('posted_by_users_files/{file_name}{ext}'.format(
-        file_name=slugify(file_name),
-        ext=ext
-    ))
+    return os.path.join(
+        '{file_path}/{file_name}{ext}'.format(
+            file_path=file_path,
+            file_name=file_name,
+            ext=ext
+        )
+    )
 
 
 class SlackConfiguration(SingletonModel):
@@ -48,6 +76,7 @@ class SlackChannels(models.Model):
         blank=True,
         null=True,
         max_length=100,
+        db_index=True
     )
 
     channel_id = models.CharField(
@@ -55,24 +84,27 @@ class SlackChannels(models.Model):
         blank=True,
         null=True,
         max_length=20,
+        db_index=True
     )
 
     channel_description = models.TextField(
         'Channel description',
         blank=True,
-        null=True
-
+        null=True,
+        db_index=True
     )
 
     members = models.TextField(
         'Channel members',
         blank=True,
-        null=True
+        null=True,
+        db_index=True
     )
 
     number_of_members = models.IntegerField(
         'Number of members',
         default=0,
+        db_index=True
     )
 
     def __str__(self):
@@ -92,27 +124,31 @@ class SlackUsers(models.Model):
         'Slack ID',
         max_length=32,
         blank=True,
-        null=True
+        null=True,
+        db_index=True
     )
 
     slack_username = models.CharField(
         'Username',
         blank=True,
         null=True,
-        max_length=255
+        max_length=255,
+        db_index=True
     )
 
     slack_email = models.CharField(
         'Email',
         max_length=255,
         blank=True,
-        null=True
+        null=True,
+        db_index=True
     )
 
     slack_avatar_path = models.URLField(
         'Avatar URL',
         blank=True,
-        null=True
+        null=True,
+        db_index=True
     )
 
     def __str__(self):
@@ -133,19 +169,22 @@ class SlackMessages(models.Model):
         max_length=255,
         blank=True,
         null=True,
+        db_index=True
     )
 
     message = HTMLField(
         'Message',
         blank=True,
         null=True,
+        db_index=True
     )
 
     author_of_message = models.CharField(
         'User',
         blank=True,
         null=True,
-        max_length=255
+        max_length=255,
+        db_index=True
     )
 
     timestamp = models.DateTimeField(
@@ -187,7 +226,8 @@ class SlackFiles(models.Model):
         'Slack user',
         blank=True,
         null=True,
-        max_length=255
+        max_length=255,
+        db_index=True
     )
 
     file_path = models.URLField(
@@ -202,6 +242,12 @@ class SlackFiles(models.Model):
         null=True
     )
 
+    file_size = models.PositiveIntegerField(
+        'File size',
+        db_index=True,
+        default=0
+    )
+
     download_status = models.BooleanField(
         'Download status',
         default=False,
@@ -210,6 +256,20 @@ class SlackFiles(models.Model):
 
     timestamp = models.DateTimeField(
         'Timestamp'
+    )
+
+    file_content_type = models.CharField(
+        'Content-Type',
+        max_length=255,
+        db_index=True,
+        blank=True
+    )
+
+    file_sha256_checksum = models.CharField(
+        'SHA-256',
+        max_length=255,
+        db_index=True,
+        blank=True
     )
 
     class Meta:
@@ -230,6 +290,7 @@ class SlackPrivateChannels(models.Model):
         blank=True,
         null=True,
         max_length=100,
+        db_index=True
     )
 
     private_channel_id = models.CharField(
@@ -237,32 +298,37 @@ class SlackPrivateChannels(models.Model):
         blank=True,
         null=True,
         max_length=20,
+        db_index=True
     )
 
     private_channel_creator = models.CharField(
         'Private channel creator',
         blank=True,
         null=True,
-        max_length=100
+        max_length=100,
+        db_index=True
     )
 
     private_channel_members = models.TextField(
         'Private channel members',
         blank=True,
-        null=True
+        null=True,
+        db_index=True
     )
 
     private_channel_value = models.TextField(
         'Private channel value',
         blank=True,
-        null=True
+        null=True,
+        db_index=True
     )
 
     private_channel_topic = models.CharField(
         'Private channel topic',
         blank=True,
         null=True,
-        max_length=255
+        max_length=255,
+        db_index=True
     )
 
     def __str__(self):
@@ -282,14 +348,16 @@ class SlackTeamEmojis(models.Model):
         'Emoji',
         blank=True,
         null=True,
-        max_length=64
+        max_length=64,
+        db_index=True
     )
 
     emoji_path = models.CharField(
         'Emoji path',
         blank=True,
         null=True,
-        max_length=255
+        max_length=255,
+        db_index=True
     )
 
     class Meta:

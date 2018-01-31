@@ -102,7 +102,7 @@ PASSWORD_HASHERS = (
 )
 
 SUIT_CONFIG = {
-    'ADMIN_NAME': 'Django Slack Storage v1.0',
+    'ADMIN_NAME': 'Django Slack Storage v1.1.0',
 
     'MENU': (
         '-',
@@ -149,7 +149,9 @@ BROKER_HEARTBEAT = '?heartbeat=30'
 if not BROKER_URL.endswith(BROKER_HEARTBEAT):
     BROKER_URL += BROKER_HEARTBEAT
 
-CELERYBEAT_SCHEDULE = {
+CELERYBEAT_SCHEDULE = {}
+
+CELERYBEAT_API = {
     'get_slack_users_task': {
         'task': 'get_slack_users_task',
         'schedule': crontab(minute='*/5')
@@ -158,27 +160,29 @@ CELERYBEAT_SCHEDULE = {
         'task': 'get_slack_channels_task',
         'schedule': crontab(minute='*/10')
     },
-    'get_posted_by_users_files_task': {
-        'task': 'get_posted_by_users_files_task',
-        'schedule': crontab(minute='*/15')
-    },
     'get_channel_messages_task': {
         'task': 'get_channel_messages_task',
-        'schedule': crontab(minute='*/15')
+        'schedule': crontab()
+    },
+    'get_posted_by_users_files_task': {
+        'task': 'get_posted_by_users_files_task',
+        'schedule': crontab()
     },
     'get_slack_private_channels_task': {
         'task': 'get_slack_private_channels_task',
-        'schedule': crontab(minute='*/15')
+        'schedule': crontab(minute='*/30')
     },
     'get_team_emojis_task': {
         'task': 'get_team_emojis_task',
-        'schedule': crontab(minute='*/15')
+        'schedule': crontab(hour='*/12')
     },
     'download_posted_by_users_files_task': {
         'task': 'download_posted_by_users_files_task',
-        'schedule': crontab(minute='*/15')
+        'schedule': crontab(minute='*/5')
     },
 }
+
+CELERYBEAT_SCHEDULE.update(CELERYBEAT_API)
 
 NOTEBOOK_ARGUMENTS = [
     '--ip=0.0.0.0',
