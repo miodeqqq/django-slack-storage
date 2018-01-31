@@ -100,3 +100,5 @@ static/
 .gitignore
 .dockerignore
 run_tasks.sh
+celerybeat-schedule
+celerybeat.pid

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+from api.utils import convert_size
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -47,6 +49,26 @@ class SlackTeamEmojisAdmin(admin.ModelAdmin):
     get_emoji_as_thumbnail.allow_tags = True
     get_emoji_as_thumbnail.short_description = 'Emojis as thumbnail'
 
+    def has_add_permission(self, request):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def get_actions(self, request):
+        actions = super(SlackTeamEmojisAdmin, self).get_actions(request)
+
+        if request.user.groups.filter(name='Employee'):
+            del actions['delete_selected']
+
+        return actions
+
 
 @admin.register(SlackPrivateChannels)
 class SlackPrivateChannelsAdmin(admin.ModelAdmin):
@@ -93,12 +115,35 @@ class SlackPrivateChannelsAdmin(admin.ModelAdmin):
 
     list_per_page = 60
 
+    def has_add_permission(self, request):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def get_actions(self, request):
+        actions = super(SlackPrivateChannelsAdmin, self).get_actions(request)
+
+        if request.user.groups.filter(name='Employee'):
+            del actions['delete_selected']
+
+        return actions
+
 
 @admin.register(SlackFiles)
 class SlackFilesAdmin(admin.ModelAdmin):
     fields = (
         'user',
         'user_file',
+        'file_size',
+        'file_content_type',
+        'file_sha256_checksum',
         'file_path',
         'download_status',
         'timestamp'
@@ -106,7 +151,8 @@ class SlackFilesAdmin(admin.ModelAdmin):
 
     list_display = (
         'user',
-        'user_file',
+        'get_user_file',
+        'get_filesize',
         'download_status',
         'get_file_path_as_url',
         'timestamp'
@@ -114,6 +160,8 @@ class SlackFilesAdmin(admin.ModelAdmin):
 
     list_filter = (
         'user',
+        'download_status',
+        'file_content_type'
     )
 
     ordering = (
@@ -128,10 +176,40 @@ class SlackFilesAdmin(admin.ModelAdmin):
         'user',
         'file_path',
         'download_status',
-        'timestamp'
+        'file_size',
+        'timestamp',
+        'file_content_type',
+        'file_sha256_checksum'
     )
 
     list_per_page = 60
+
+    def get_filesize(self, obj):
+        """
+        Returns human readable filesize for downloaded files.
+        """
+
+        return convert_size(obj.file_size)
+
+    get_filesize.allow_tags = True
+    get_filesize.admin_order_field = 'file_size'
+    get_filesize.short_description = 'File size'
+
+    def get_user_file(self, obj):
+        if obj.user_file:
+            file_url = obj.user_file.url
+            file_url = file_url.split('media')[-1]
+
+            return '<a href="/media{file_path}" target="_blank">{file_name}</a>'.format(
+                file_path=file_url,
+                file_name=os.path.basename(obj.user_file.path)
+            )
+        else:
+            return '<span style="color:red">Not yet...</span>'
+
+    get_user_file.allow_tags = True
+    get_user_file.admin_order_field = 'user_file'
+    get_user_file.short_description = 'Downloaded file'
 
     def get_file_path_as_url(self, obj):
         if obj.file_path:
@@ -143,6 +221,26 @@ class SlackFilesAdmin(admin.ModelAdmin):
 
     get_file_path_as_url.allow_tags = True
     get_file_path_as_url.short_description = 'File URL'
+
+    def has_add_permission(self, request):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def get_actions(self, request):
+        actions = super(SlackFilesAdmin, self).get_actions(request)
+
+        if request.user.groups.filter(name='Employee'):
+            del actions['delete_selected']
+
+        return actions
 
 
 @admin.register(SlackConfiguration)
@@ -192,6 +290,26 @@ class SlackChannelsAdmin(admin.ModelAdmin):
 
     list_per_page = 60
 
+    def has_add_permission(self, request):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def get_actions(self, request):
+        actions = super(SlackChannelsAdmin, self).get_actions(request)
+
+        if request.user.groups.filter(name='Employee'):
+            del actions['delete_selected']
+
+        return actions
+
 
 @admin.register(SlackMessages)
 class SlackMessagesAdmin(admin.ModelAdmin):
@@ -231,6 +349,26 @@ class SlackMessagesAdmin(admin.ModelAdmin):
     )
 
     list_per_page = 60
+
+    def has_add_permission(self, request):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def get_actions(self, request):
+        actions = super(SlackMessagesAdmin, self).get_actions(request)
+
+        if request.user.groups.filter(name='Employee'):
+            del actions['delete_selected']
+
+        return actions
 
 
 @admin.register(SlackUsers)
@@ -277,3 +415,23 @@ class SlackUsersAdmin(admin.ModelAdmin):
 
     get_avatar_as_thumbnail.allow_tags = True
     get_avatar_as_thumbnail.short_description = 'User\'s avatar'
+
+    def has_add_permission(self, request):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.groups.filter(name='Employee'):
+            return False
+
+        return True
+
+    def get_actions(self, request):
+        actions = super(SlackUsersAdmin, self).get_actions(request)
+
+        if request.user.groups.filter(name='Employee'):
+            del actions['delete_selected']
+
+        return actions

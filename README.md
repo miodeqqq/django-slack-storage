@@ -8,26 +8,18 @@ DJANGO SLACK STORAGE
 * users posted files (user name, file URL, timestamp)
 * channels posted messages (channel name, user name, message, timestamp)
 
-**Current stable version:** v1.0
+**Current stable version:** v1.1.0
 
-**Release date:** 08.04.2017
+**Release date:** 31.01.2018
 
 ### Author:
 
 * Maciej Januszewski (maciek@mjanuszewski.pl)
 
 ### Running:
-
-* **Build Dockerfile:** 
 ```
-docker build . -t slack-client
+docker build . -t slack-client && docker-compose -f docker-compose.yml up -d --build --remove-orphans
 ```
-
-* **Run docker-compose (docker-compose.yml):**
-```
-docker-compose up -d
-```
-
 
 ### From now:
 

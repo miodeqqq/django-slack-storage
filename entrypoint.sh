@@ -16,7 +16,8 @@ gunicorn slack_client.wsgi:application \
   --name root \
   --bind 0.0.0.0:8000 \
   --timeout 900 \
-  --workers 10 \
+  --workers 3 \
+  --reload \
   --log-level=info \
   --log-file=-
   "$@"

@@ -32,7 +32,7 @@ jupyter-client==5.0.1
 jupyter-console==5.1.0
 jupyter-core==4.3.0
 kombu==3.0.37
-lxml==3.7.3
+lxml==4.1.1
 MarkupSafe==1.0
 mistune==0.7.4
 nbconvert==5.1.1
@@ -50,6 +50,7 @@ Pygments==2.2.0
 pyOpenSSL==16.2.0
 pyparsing==2.2.0
 python-dateutil==2.6.0
+python-magic==0.4.15
 pytz==2017.2
 pyzmq==16.0.2
 qtconsole==4.3.0
