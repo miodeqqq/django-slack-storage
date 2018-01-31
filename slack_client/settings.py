@@ -162,11 +162,11 @@ CELERYBEAT_API = {
     },
     'get_channel_messages_task': {
         'task': 'get_channel_messages_task',
-        'schedule': crontab()
+        'schedule': crontab(minute='*/10')
     },
     'get_posted_by_users_files_task': {
         'task': 'get_posted_by_users_files_task',
-        'schedule': crontab()
+        'schedule': crontab(minute='*/10')
     },
     'get_slack_private_channels_task': {
         'task': 'get_slack_private_channels_task',
@@ -178,7 +178,7 @@ CELERYBEAT_API = {
     },
     'download_posted_by_users_files_task': {
         'task': 'download_posted_by_users_files_task',
-        'schedule': crontab(minute='*/5')
+        'schedule': crontab(minute='*/10')
     },
 }
 

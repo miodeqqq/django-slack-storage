@@ -143,18 +143,21 @@ def get_posted_by_users_files_task(self):
 
         slack_files = get_all_users_files(sc)
 
-        for slack_file in slack_files:
-            slack_user = SlackUsers.objects.filter(slack_id=slack_file[0])
+        users_in_db = SlackUsers.objects.values_list('pk', flat=True)
 
-            if slack_user.exists():
-                user = slack_user.first().slack_email
+        if users_in_db:
+            for slack_file in slack_files:
+                slack_user = SlackUsers.objects.filter(slack_id=slack_file[0])
 
-                if not SlackFiles.objects.filter(file_path=slack_file[1]).exists():
-                    SlackFiles.objects.create(
-                        user=user,
-                        file_path=slack_file[1],
-                        timestamp=get_timestamp(slack_file[2])
-                    )
+                if slack_user.exists():
+                    user = slack_user.first().slack_email
+
+                    if not SlackFiles.objects.filter(file_path=slack_file[1]).exists():
+                        SlackFiles.objects.create(
+                            user=user,
+                            file_path=slack_file[1],
+                            timestamp=get_timestamp(slack_file[2])
+                        )
 
     except Exception as exc:
         logger.info('[get_posted_by_users_files_task] Error --> {exc}'.format(exc=exc))
