@@ -178,7 +178,7 @@ CELERYBEAT_API = {
     },
     'download_posted_by_users_files_task': {
         'task': 'download_posted_by_users_files_task',
-        'schedule': crontab(minute='*/10')
+        'schedule': crontab(minute='*/15')
     },
 }
 
