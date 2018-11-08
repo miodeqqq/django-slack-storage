@@ -102,3 +102,4 @@ static/
 run_tasks.sh
 celerybeat-schedule
 celerybeat.pid
+media/

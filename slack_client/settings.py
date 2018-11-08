@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-
+import dj_database_url
 from celery.schedules import crontab
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -66,14 +66,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'slack_client.wsgi.application'
 
+DATABASE_URL = 'postgres://slack:slack@postgres:5432/slack_db'
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'postgres',
-    }
+    'default': dj_database_url.config(default=DATABASE_URL)
 }
+
 
 LANGUAGE_CODE = 'en-us'
 
@@ -162,11 +160,11 @@ CELERYBEAT_API = {
     },
     'get_channel_messages_task': {
         'task': 'get_channel_messages_task',
-        'schedule': crontab()
+        'schedule': crontab(minute='*/10')
     },
     'get_posted_by_users_files_task': {
         'task': 'get_posted_by_users_files_task',
-        'schedule': crontab()
+        'schedule': crontab(minute='*/10')
     },
     'get_slack_private_channels_task': {
         'task': 'get_slack_private_channels_task',
@@ -178,7 +176,7 @@ CELERYBEAT_API = {
     },
     'download_posted_by_users_files_task': {
         'task': 'download_posted_by_users_files_task',
-        'schedule': crontab(minute='*/5')
+        'schedule': crontab(minute='*/15')
     },
 }
 

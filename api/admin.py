@@ -70,7 +70,7 @@ class SlackTeamEmojisAdmin(admin.ModelAdmin):
         return actions
 
 
-@admin.register(SlackPrivateChannels)
+# @admin.register(SlackPrivateChannels)
 class SlackPrivateChannelsAdmin(admin.ModelAdmin):
     fields = (
         'private_channel_id',
