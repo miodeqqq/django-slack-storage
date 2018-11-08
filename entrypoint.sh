@@ -20,4 +20,5 @@ gunicorn slack_client.wsgi:application \
   --reload \
   --log-level=info \
   --log-file=-
-  "$@"
+
+exec "$@"

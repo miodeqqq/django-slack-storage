@@ -1,23 +1,33 @@
-FROM python:3.6
+FROM python:3.6.6
 
 MAINTAINER Maciej Januszewski <maciek@mjanuszewski.pl>
 
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir /code
-WORKDIR /code
+RUN mkdir /src
+
+WORKDIR /src
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
-    postgresql-contrib \
+    python3-software-properties \
+    ca-certificates \
     build-essential \
-    checkinstall \
+    libffi-dev \
+    libssl-dev \
+    dbus-x11 \
+    postgresql \
+    openssl \
+    python-openssl \
+    wireless-tools \
+    python-pypdf2 \
     vim && \
     rm -rf /var/lib/apt/lists/*
 
-COPY ./requirements.txt .
+COPY requirements.txt /src
 
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY . /code/
+COPY . /src
 
+RUN chmod +x *.py
 RUN chmod +x *.sh

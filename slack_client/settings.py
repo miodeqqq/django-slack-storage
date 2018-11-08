@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-
+import dj_database_url
 from celery.schedules import crontab
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -66,14 +66,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'slack_client.wsgi.application'
 
+DATABASE_URL = 'postgres://slack:slack@postgres:5432/slack_db'
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'postgres',
-    }
+    'default': dj_database_url.config(default=DATABASE_URL)
 }
+
 
 LANGUAGE_CODE = 'en-us'
 

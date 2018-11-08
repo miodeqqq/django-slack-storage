@@ -3,13 +3,22 @@ services:
 
   postgres:
     restart: always
-    image: postgres:9.6
+    image: postgres:latest
     volumes:
       - /var/lib/postgresql
+    environment:
+      - POSTGRES_PASSWORD=slack
+      - POSTGRES_USER=slack
+      - POSTGRES_DB=slack_db
 
   web:
     image: slack-client
-    command: ./docker-entrypoint-web.sh
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint:
+      - ./wait-for-postgres.sh
+      - ./entrypoint.sh
     ports:
       - "1111:8000"
     links:
@@ -18,7 +27,9 @@ services:
     depends_on:
       - postgres
     volumes:
-      - .:/code
+      - .:/src
+    environment:
+      - DATABASE_URL=postgres://slack:slack@postgres:5432/slack_db
 
   rabbitmq:
     image: rabbitmq:3.6-management
