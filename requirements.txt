@@ -7,7 +7,7 @@ celery==3.1.25
 certifi==2018.10.15
 cffi==1.11.5
 chardet==3.0.4
-cryptography==2.3.1
+cryptography==3.2
 dj-database-url==0.5.0
 Django==1.8.17
 django-celery==3.2.2
